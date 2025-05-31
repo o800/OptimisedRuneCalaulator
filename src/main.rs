@@ -6,16 +6,16 @@ fn main() {
     let broken = input!("number of broken shards you have already ").parse::<u32>().unwrap();
     let optimisation = input!("would you like to calculate chances for optimal broken shard usage (Y), or for immediately forging runes when possible (N)? ");
     let wait;
-    if optimisation == "Y" || optimisation == "y" {
-        wait = -1;
+    if optimisation == "N" || optimisation == "n" {
+        wait = -2;
     }
     else {
-        wait = -2;
+        wait = -1;
     }
     let mut continue_normally: String = "Y".into();
     if broken == 10 {
         let calc_broken = input!("calculate optimal time to use your current broken shards? (Y/N) ");
-        if calc_broken == "Y" || calc_broken == "y"{
+        if calc_broken != "N" || calc_broken != "n"{
             let mut optimal_wait = 0;
             let mut max_value = 0.0;
             for i in 0..(9 - filled) {
@@ -26,16 +26,20 @@ fn main() {
                 }
             };
             println!("wait until you fill {} more slots before forging rune", optimal_wait);
-            continue_normally = input!("continue to normal calculations? (Y/N)");
+            let temp = input!("continue to normal calculations? (Y/N)");
+            if temp != "" {
+                continue_normally = temp;
+            }
         }
     }
-if continue_normally == "Y" || continue_normally == "y" {
-    for k in 0..max_runes {
-        let max_depth = k + 1;
-        let chance = calc(filled, true, 1f64 - (filled as f64 / 9f64), 0, broken, wait, max_depth) + calc(filled, false, filled as f64 / 9f64, 0, broken, wait, max_depth);
-        println!("{}% chance with {} runes", chance*100f64, max_depth);
+    if continue_normally == "Y" || continue_normally == "y" {
+        for k in 0..max_runes {
+            let max_depth = k + 1;
+            let chance = calc(filled, true, 1f64 - (filled as f64 / 9f64), 0, broken, wait, max_depth) + calc(filled, false, filled as f64 / 9f64, 0, broken, wait, max_depth);
+            println!("{}% chance with {} runes", chance*100f64, max_depth);
+        }
     }
-}
+    input!("Done! press enter to exit");
 }
 
 fn calc(mut current_filled: u32, success: bool, weight: f64, mut depth: u32, mut current_broken: u32, mut runes_to_wait: i32, max_depth: u32) -> f64 {
@@ -92,20 +96,14 @@ fn calc(mut current_filled: u32, success: bool, weight: f64, mut depth: u32, mut
         }
         current_filled += 1;
         if current_filled == 9 {
-            weight
-        } else if (depth == max_depth) && (current_broken != 10 || runes_to_wait > 0) {
-            0.0
-        } else {
-            weight * (calc(current_filled, true, 1f64 - (current_filled as f64 / 9f64), depth, current_broken, runes_to_wait, max_depth) + calc(current_filled, false, current_filled as f64 / 9f64, depth, current_broken, runes_to_wait, max_depth))
+            return weight
         }
-    } else {
-        if current_broken != 10 {
+    } else if current_broken != 10 {
             current_broken += 1;
         }
-        if (depth == max_depth) && (current_broken != 10 || runes_to_wait > 0) {
-            0.0
-        } else {
-            weight * (calc(current_filled, true, 1f64 - (current_filled as f64 / 9f64), depth, current_broken, runes_to_wait, max_depth) + calc(current_filled, false, current_filled as f64 / 9f64, depth, current_broken, runes_to_wait, max_depth))
-        }
+    if (depth == max_depth) && (current_broken != 10 || runes_to_wait > 0) {
+        0.0
+    } else {
+        weight * (calc(current_filled, true, 1f64 - (current_filled as f64 / 9f64), depth, current_broken, runes_to_wait, max_depth) + calc(current_filled, false, current_filled as f64 / 9f64, depth, current_broken, runes_to_wait, max_depth))
     }
 }
