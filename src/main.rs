@@ -1,9 +1,9 @@
 use prompted::input;
 
 fn main() {
-    let filled = input!("num runes filled already ").parse::<u32>().unwrap();
-    let max_runes = input!("max number of runes to spend ").parse::<u32>().unwrap();
-    let broken = input!("num broken shards ").parse::<u32>().unwrap();
+    let filled = input!("number of rune slots filled already ").parse::<u32>().unwrap();
+    let max_runes = input!("maximum number of runes to calculate for ").parse::<u32>().unwrap();
+    let broken = input!("number of broken shards ").parse::<u32>().unwrap();
     let optimisation = input!("would you like to calculate chances for optimal broken shard usage (Y), or for immediately forging runes when possible (N)? ");
     let  wait;
     if optimisation == "Y" || optimisation == "y" {
