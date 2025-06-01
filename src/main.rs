@@ -4,15 +4,8 @@ fn main() {
     let filled = input!("number of rune slots already filled ").parse::<u32>().unwrap();
     let max_runes = input!("maximum number of runes to calculate for ").parse::<u32>().unwrap();
     let broken = input!("number of broken shards you have already ").parse::<u32>().unwrap();
-    let optimisation = input!("would you like to calculate chances for optimal broken shard usage (Y), or for immediately forging runes when possible (N)? ");
-    let wait;
-    if optimisation == "N" || optimisation == "n" {
-        wait = -2;
-    }
-    else {
-        wait = -1;
-    }
     let mut continue_normally: String = "Y".into();
+    let wait;
     if broken == 10 {
         let calc_broken = input!("calculate optimal time to use your current broken shards? (Y/N) ");
         if calc_broken != "N" || calc_broken != "n"{
@@ -33,6 +26,13 @@ fn main() {
         }
     }
     if continue_normally == "Y" || continue_normally == "y" {
+        let optimisation = input!("would you like to calculate chances for optimal broken shard usage (Y), or for immediately forging runes when possible (N)? ");
+        if optimisation == "N" || optimisation == "n" {
+            wait = -2;
+        }
+        else {
+            wait = -1;
+        }
         for k in 0..max_runes {
             let max_depth = k + 1;
             let chance = calc(filled, true, 1f64 - (filled as f64 / 9f64), 0, broken, wait, max_depth) + calc(filled, false, filled as f64 / 9f64, 0, broken, wait, max_depth);
